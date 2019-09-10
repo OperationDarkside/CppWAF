@@ -9,18 +9,17 @@
 #define CPPWAF_UI_H_
 
 #include "Component.h"
-#include "Connector.h"
-
 #include <memory>
+#include "Router.h"
 
 namespace cwaf {
 class UI {
 public:
 	void setContent(std::shared_ptr<Component> component) {
 		if (rootComponent) {
-			connector.removeComponent(rootComponent->getId());
+			//connector.removeComponent(rootComponent->getId());
 		}
-		connector.registerComponent(component);
+		router.registerComponent(component);
 
 		rootComponent = component;
 	}
@@ -31,7 +30,7 @@ public:
 
 private:
 	std::shared_ptr<Component> rootComponent;
-	Connector connector;
+	Router router;
 };
 }
 

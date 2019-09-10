@@ -11,11 +11,14 @@
 #include "CTAS/HttpRequest.h"
 #include "CTAS/HttpResponse.h"
 
+#include "UI.h"
+//#include "WafSession.h"
+
 namespace cwaf {
 class WafRouterPage {
 public:
-	ctas::HttpResponse<WafSession> HandleRequest (ctas::HttpRequest<WafSession>& request) {
-		ctas::HttpResponse<WafSession> resp;
+	ctas::HttpResponse<WafSession<UI>> HandleRequest (ctas::HttpRequest<WafSession<UI>>& request) {
+		ctas::HttpResponse<WafSession<UI>> resp;
 
 		auto& headers = resp.HeaderFields ();
 		headers["Content-Type"] = "text/html";

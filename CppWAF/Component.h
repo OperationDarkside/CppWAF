@@ -1,7 +1,9 @@
 #ifndef CPPWAF_COMPONENT_H_
 #define CPPWAF_COMPONENT_H_
 
-#include "Connector.h"
+#include <memory>
+
+#include "ComponentConnection.h"
 
 namespace cwaf {
 
@@ -15,12 +17,16 @@ public:
 		id = _id;
 	}
 
-	void setConnector(Connector* connector) {
-		conn = connector;
+	void connect(std::weak_ptr<ComponentConnection>&& _conn) {
+		conn = std::move(_conn);
+	}
+
+	void disconnect(){
+
 	}
 private:
 	size_t id = 0;
-	Connector* conn = nullptr;
+	std::weak_ptr<ComponentConnection> conn;
 };
 }
 

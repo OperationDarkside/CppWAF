@@ -11,9 +11,14 @@
 #include "CTAS/HttpRequest.h"
 #include "CTAS/HttpResponse.h"
 
+#include "UI.h"
+//#include "WafSession.h"
+
+namespace cwaf {
 class WafRootPage {
-	HttpResponse<WafSession> HandleRequest (HttpRequest<WafSession>& request) {
-			HttpResponse<WafSession> resp;
+public:
+	ctas::HttpResponse<WafSession<UI>> HandleRequest (ctas::HttpRequest<WafSession<UI>>& request) {
+		ctas::HttpResponse<WafSession<UI>> resp;
 
 			auto& headers = resp.HeaderFields ();
 			headers["Content-Type"] = "text/html";
@@ -38,6 +43,7 @@ class WafRootPage {
 			return resp;
 		}
 };
+}
 
 
 

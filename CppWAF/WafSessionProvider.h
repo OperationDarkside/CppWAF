@@ -28,7 +28,7 @@ public:
 		if(itSession == sessions.end()){
 			return std::nullopt;
 		}
-		return itSession.second;
+		return &itSession->second;
 	}
 
 private:
