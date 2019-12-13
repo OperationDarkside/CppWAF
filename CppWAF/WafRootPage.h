@@ -38,7 +38,15 @@ public:
 
 			resp.Body(buffer.GetString());
 			*/
-			resp.Body("dfklgjdlfkg");
+			//resp.Body("dfklgjdlfkg");
+
+			if(!request.HasSession()){
+				WafSession<UI>& newSession = resp.CreateSession();
+				UI& ui = newSession.getUI();
+			} else {
+				WafSession<UI>* session = request.CurrentSession();
+				UI& ui = session->getUI();
+			}
 
 			return resp;
 		}

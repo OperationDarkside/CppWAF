@@ -8,29 +8,55 @@
 #ifndef CPPWAF_UI_H_
 #define CPPWAF_UI_H_
 
+#include "Router.h"
 #include "Component.h"
 #include <memory>
-#include "Router.h"
+#include <map>
+#include <vector>
 
 namespace cwaf {
 class UI {
 public:
-	void setContent(std::shared_ptr<Component> component) {
-		if (rootComponent) {
-			//connector.removeComponent(rootComponent->getId());
-		}
-		router.registerComponent(component);
 
-		rootComponent = component;
+	UI() {
+		router.addFunc = [&](size_t id, Component* c) {
+			c->setId(id);
+			c->setRouter(&router);
+			index.emplace(id, c);
+		};
+
+		router.removeFunc = [&](size_t id){
+			auto it = index.extract(id);
+			it.value().setId(0);
+			it.value().clearRouter();
+		};
 	}
 
-	std::shared_ptr<Component> getContent() {
-		return rootComponent;
+	void setComponent(std::unique_ptr<Component> &&newRoot) {
+		for(auto&[id, comp] : index){
+			comp->setId(0);
+			comp->clearRouter();
+		}
+		index.clear();
+		router.clearId();
+
+		root = std::move(newRoot);
+		root->setId(router.getNextId());
+		root->setRouter(&router);
+	}
+
+	void distributeCommands(std::vector<Command>& cmds){
+
+	}
+
+	std::vector<Command> getInitCommands() {
+
 	}
 
 private:
-	std::shared_ptr<Component> rootComponent;
 	Router router;
+	std::map<size_t, Component*> index;
+	std::unique_ptr<Component> root;
 };
 }
 

@@ -3,12 +3,14 @@
 
 #include <memory>
 
-#include "ComponentConnection.h"
+#include "Router.h"
 
 namespace cwaf {
 
 class Component {
 public:
+
+	virtual ~Component() = default;
 
 	size_t getId() {
 		return id;
@@ -17,16 +19,19 @@ public:
 		id = _id;
 	}
 
-	void connect(std::weak_ptr<ComponentConnection>&& _conn) {
-		conn = std::move(_conn);
+	void setRouter(Router* newRouter){
+		router = newRouter;
 	}
 
-	void disconnect(){
-
+	void clearRouter(){
+		router = nullptr;
 	}
+
+	virtual void recieveCommand(Command& cmd) = 0;
+
 private:
 	size_t id = 0;
-	std::weak_ptr<ComponentConnection> conn;
+	Router* router = nullptr;
 };
 }
 
