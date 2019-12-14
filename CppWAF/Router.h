@@ -11,7 +11,8 @@
 #include <functional>
 #include <vector>
 
-#include "Command.h"
+#include "InCommand.h"
+#include "OutCommand.h"
 
 namespace cwaf {
 
@@ -19,11 +20,8 @@ class Component;
 
 class Router {
 public:
-	Router() {
 
-	}
-
-	void registerComponent(const Component *component) {
+	void registerComponent(Component *component) {
 		addFunc(nextId++, component);
 	}
 
@@ -31,11 +29,11 @@ public:
 		removeFunc(id);
 	}
 
-	void addCommand(Command cmd) {
+	void addCommand(OutCommand cmd) {
 		commands.push_back(cmd);
 	}
 
-	auto& getCommands() {
+	std::vector<OutCommand>& getCommands() {
 		return commands;
 	}
 
@@ -51,7 +49,7 @@ public:
 	std::function<void(size_t)> removeFunc;
 private:
 	size_t nextId = 1;
-	std::vector<Command> commands;
+	std::vector<OutCommand> commands;
 };
 }
 

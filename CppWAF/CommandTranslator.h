@@ -8,7 +8,7 @@
 #ifndef COMMANDTRANSLATOR_H_
 #define COMMANDTRANSLATOR_H_
 
-#include "Command.h"
+#include "InCommand.h"
 
 class CommandTranslator {
 

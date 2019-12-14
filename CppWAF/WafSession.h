@@ -8,6 +8,7 @@
 #ifndef CPPWAF_WAFSESSION_H_
 #define CPPWAF_WAFSESSION_H_
 
+#include <memory>
 
 namespace cwaf {
 
@@ -15,12 +16,12 @@ template<typename UI_Type>
 class WafSession {
 public:
 
-	const UI_Type& getUI() {
-		return ui;
+	UI_Type& getUI() {
+		return *ui;
 	}
 
 private:
-	UI_Type ui;
+	std::unique_ptr<UI_Type> ui = std::make_unique<UI_Type>();
 };
 }
 

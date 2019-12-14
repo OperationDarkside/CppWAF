@@ -11,7 +11,7 @@
 #include <functional>
 #include <utility>
 
-#include "Command.h"
+#include "InCommand.h"
 
 namespace cwaf {
 

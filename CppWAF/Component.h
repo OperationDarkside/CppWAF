@@ -19,6 +19,10 @@ public:
 		id = _id;
 	}
 
+	unsigned short getTypeId(){
+		return typeId;
+	}
+
 	void setRouter(Router* newRouter){
 		router = newRouter;
 	}
@@ -27,10 +31,12 @@ public:
 		router = nullptr;
 	}
 
-	virtual void recieveCommand(Command& cmd) = 0;
+	virtual void recieveCommand(InCommand& cmd) = 0;
+	virtual void createCommand() = 0;
 
-private:
+protected:
 	size_t id = 0;
+	unsigned short typeId = 0;
 	Router* router = nullptr;
 };
 }

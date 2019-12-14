@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+var components = {};
+
+function init(root) {
+	var initCmd = {
+		type: 0
+	};
+
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var resp = JSON.parse(this.responseText);
+			var cmds = resp["cmds"];
+			for(var cmd of cmds) {
+				exeCmd(cmd);
+			}
+		}
+	};
+	xhttp.open("POST", "r", true);
+	xhttp.send(JSON.stringify(initCmd));
+}
+
+function exeCmd(cmd) {
+	switch(cmd["cmdType"]){
+		case 0: // CREATE
+			if(cmd["type"] == 1) {
+				createButton(cmd["id"], cmd["custom"]);
+			}
+		break;
+		case 3: // RELATION
+			relateComponent(cmd["id"], cmd["custom"]);
+		break;
+	}
+}
+
+function createButton(id, custom){
+	var customValues = JSON.parse(custom);
+	var btn = document.createElement("BUTTON");
+	btn["id"] = id;
+	btn.innerHTML = customValues["caption"];
+
+	components[id] = btn;
+}
+
+function relateComponent(id, custom){
+	var customValues = JSON.parse(custom);
+	var srcComp = components[id];
+	var targetCompId = customValues["target"];
+	if(targetCompId == 0){
+		document.getElementById("root").appendChild(srcComp);
+	} else {
+		var trgComp = components[targetCompId];
+		trgComp.appendChild(srcComp);
+	}
+	
+	
+}
+</script>
+</head>
+<body id="root" onload="init(this);">
+
+</body>
+</html>
