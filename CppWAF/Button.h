@@ -35,7 +35,7 @@ public:
 		outCmd.setCommandType(OUT_COMMAND_TYPE::CREATE);
 		outCmd.setComponentId(id);
 		outCmd.setComponentTypeId(typeId);
-		outCmd.setCustomOutput("\"caption\":\"Click Me!\"");
+		outCmd.setCustomOutput("{\"caption\":\"Click Me!\"}");
 
 		router->addCommand(outCmd);
 	}

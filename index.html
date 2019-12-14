@@ -23,6 +23,21 @@ function init(root) {
 	xhttp.send(JSON.stringify(initCmd));
 }
 
+function sendCmd(cmd){
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var resp = JSON.parse(this.responseText);
+			var cmds = resp["cmds"];
+			for(var cmd of cmds) {
+				exeCmd(cmd);
+			}
+		}
+	};
+	xhttp.open("POST", "r", true);
+	xhttp.send(JSON.stringify(cmd));
+}
+
 function exeCmd(cmd) {
 	switch(cmd["cmdType"]){
 		case 0: // CREATE
@@ -37,16 +52,29 @@ function exeCmd(cmd) {
 }
 
 function createButton(id, custom){
+	console.log(custom);
 	var customValues = JSON.parse(custom);
+	console.log(customValues);
 	var btn = document.createElement("BUTTON");
 	btn["id"] = id;
 	btn.innerHTML = customValues["caption"];
+	btn.onclick = function(){
+		var cmd = {};
+		cmd["type"] = 1;
+		cmd["cmds"] = [];
+		cmd["cmds"][0] = {};
+		cmd["cmds"][0]["id"] = id;
+		cmd["cmds"][0]["cmdType"] = 0;
+		sendCmd(cmd);
+	};
 
 	components[id] = btn;
 }
 
 function relateComponent(id, custom){
+	console.log(custom);
 	var customValues = JSON.parse(custom);
+	console.log(customValues);
 	var srcComp = components[id];
 	var targetCompId = customValues["target"];
 	if(targetCompId == 0){

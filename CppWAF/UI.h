@@ -71,7 +71,7 @@ public:
 			OutCommand rootOutCmd;
 			rootOutCmd.setCommandType(OUT_COMMAND_TYPE::RELATION);
 			rootOutCmd.setComponentId(root->getId());
-			rootOutCmd.setCustomOutput("\"target\":0");
+			rootOutCmd.setCustomOutput("{\"target\":0}");
 			out.push_back(std::move(rootOutCmd));
 		}
 
