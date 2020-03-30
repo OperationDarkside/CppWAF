@@ -9,8 +9,12 @@
 #define BUTTON_H_
 
 #include <iostream>
+#include <string>
+#include <functional>
 
 #include "Component.h"
+#include "ClickEvent.h"
+#include "Property.h"
 
 namespace cwaf {
 
@@ -21,9 +25,16 @@ public:
 		setTypeId();
 	}
 
+	void setCaption(const std::string capt){
+		caption.setValue(capt);
+	}
+
 	virtual void recieveCommand(InCommand& cmd) override {
 		if(cmd.getType() == IN_COMMAND_TYPE::CLICK){
-			std::cout << "Receivied Click" << std::endl;
+			ClickEvent event;
+			for(const auto& listener : clickListeners){
+				listener(event);
+			}
 		}
 	}
 
@@ -35,7 +46,7 @@ public:
 		outCmd.setCommandType(OUT_COMMAND_TYPE::CREATE);
 		outCmd.setComponentId(id);
 		outCmd.setComponentTypeId(typeId);
-		outCmd.setCustomOutput("{\"caption\":\"Click Me!\"}");
+		outCmd.setCustomOutput("{\"caption\":\"" + caption.getValue() + "\"}");
 
 		router->addCommand(outCmd);
 	}
@@ -44,9 +55,25 @@ public:
 		typeId = 1;
 	}
 
-private:
-};
+	void addClickListener(std::function<void(const ClickEvent&)>&& listener){
+		clickListeners.emplace_back(std::move(listener));
+	}
 
+protected:
+	virtual void setRouterInternal(Router* newRouter) override {
+		caption.setRouter(newRouter);
+	}
+
+private:
+	static const std::string& toString(const std::string& str){
+		return str;
+	}
+
+	Property<std::string, &Button::toString> caption {"caption"};
+	std::vector<std::function<void(const ClickEvent&)>> clickListeners;
+
+
+};
 }
 
 #endif /* BUTTON_H_ */

@@ -8,6 +8,7 @@
 #ifndef CPPWAF_WAFROOTPAGE_H_
 #define CPPWAF_WAFROOTPAGE_H_
 
+#include <iostream>
 #include <fstream>
 #include <streambuf>
 
@@ -51,7 +52,13 @@ public:
 		if (!request.HasSession()) {
 			WafSession<UI> &newSession = resp.CreateSession();
 			UI &ui = newSession.getUI();
-			ui.setComponent(std::make_unique<Button>());
+
+			std::unique_ptr<Button> btn = std::make_unique<Button>();
+			btn->setCaption("Blubberbla");
+			btn->addClickListener([](const ClickEvent& event){
+				std::cout << "Click received" << std::endl;
+			});
+			ui.setComponent(std::move(btn));
 
 			std::streampos size;
 			std::ifstream myfile("index.html", std::ios::in|std::ios::binary|std::ios::ate);

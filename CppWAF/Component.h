@@ -25,10 +25,12 @@ public:
 
 	void setRouter(Router* newRouter){
 		router = newRouter;
+		setRouterInternal(router);
 	}
 
 	void clearRouter(){
 		router = nullptr;
+		setRouterInternal(router);
 	}
 
 	virtual void recieveCommand(InCommand& cmd) = 0;
@@ -38,6 +40,8 @@ protected:
 	size_t id = 0;
 	unsigned short typeId = 0;
 	Router* router = nullptr;
+
+	virtual void setRouterInternal(Router* newRouter) = 0;
 };
 }
 
