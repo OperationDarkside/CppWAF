@@ -9,6 +9,7 @@
 #define OUTCOMMAND_H_
 
 #include <string>
+#include <vector>
 
 #include "OutCommandType.h"
 
@@ -17,19 +18,27 @@ namespace cwaf {
 class OutCommand {
 public:
 
-	size_t getComponentId() {
+	std::size_t getComponentId() {
 		return componentId;
 	}
 
-	void setComponentId(size_t id) {
+	void setComponentId(std::size_t id) {
 		componentId = id;
 	}
 
-	unsigned short getComponentTypeId() {
+	std::size_t getPropertyId() {
+		return propertyId;
+	}
+
+	void setPropertyId(std::size_t id) {
+		propertyId = id;
+	}
+
+	std::uint16_t getComponentTypeId() {
 		return componentTypeId;
 	}
 
-	void setComponentTypeId(unsigned short id) {
+	void setComponentTypeId(std::uint16_t id) {
 		componentTypeId = id;
 	}
 
@@ -49,11 +58,17 @@ public:
 		customOutput = std::move(custOut);
 	}
 
+	std::vector<OutCommand>& getSubCommands() {
+		return subCommands;
+	}
+
 private:
-	size_t componentId = 0;
-	unsigned short componentTypeId = 0;
+	std::uint16_t propertyId = 0;
+	std::uint16_t componentTypeId = 0;
+	std::size_t componentId = 0;
 	OUT_COMMAND_TYPE type;
 	std::string customOutput;
+	std::vector<OutCommand> subCommands;
 };
 }
 

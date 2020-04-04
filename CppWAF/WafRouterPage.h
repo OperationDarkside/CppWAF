@@ -69,9 +69,25 @@ public:
 					rapidjson::Value outCmdVal;
 					outCmdVal.SetObject();
 					outCmdVal.AddMember("id", outCmd.getComponentId(), allocator);
+					outCmdVal.AddMember("propId", outCmd.getPropertyId(), allocator);
 					outCmdVal.AddMember("cmdType", outCmd.getCommandType(), allocator);
 					outCmdVal.AddMember("type", outCmd.getComponentTypeId(), allocator);
 					outCmdVal.AddMember("custom", rapidjson::Value(outCmd.getCustomOutput().c_str(), allocator), allocator);
+					if(!outCmd.getSubCommands().empty()){
+						rapidjson::Value outSubCmdArr(rapidjson::kArrayType);
+
+						for(OutCommand &subCommand : outCmd.getSubCommands()){
+							rapidjson::Value outSubCmdVal;
+							outSubCmdVal.SetObject();
+							outSubCmdVal.AddMember("id", subCommand.getComponentId(), allocator);
+							outSubCmdVal.AddMember("propId", subCommand.getPropertyId(), allocator);
+							outSubCmdVal.AddMember("cmdType", subCommand.getCommandType(), allocator);
+							outSubCmdVal.AddMember("type", subCommand.getComponentTypeId(), allocator);
+							outSubCmdVal.AddMember("custom", rapidjson::Value(subCommand.getCustomOutput().c_str(), allocator), allocator);
+							outSubCmdArr.PushBack(outSubCmdVal, allocator);
+						}
+						outCmdVal.AddMember("subCmds", outSubCmdArr, allocator);
+					}
 					outCmdArr.PushBack(outCmdVal, allocator);
 				}
 				outDoc.AddMember("cmds", outCmdArr, allocator);

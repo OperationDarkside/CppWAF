@@ -55,8 +55,8 @@ public:
 
 			std::unique_ptr<Button> btn = std::make_unique<Button>();
 			btn->setCaption("Blubberbla");
-			btn->addClickListener([](const ClickEvent& event){
-				std::cout << "Click received" << std::endl;
+			btn->addClickListener([btn](const ClickEvent& event){
+				btn->setCaption("Blaaaaaaaaaaaaaaa");
 			});
 			ui.setComponent(std::move(btn));
 

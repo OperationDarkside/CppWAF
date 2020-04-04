@@ -23,10 +23,11 @@ public:
 
 	Button(){
 		setTypeId();
+		properties = {caption};
 	}
 
 	void setCaption(const std::string capt){
-		caption.setValue(capt);
+		caption.setValue(capt, false);
 	}
 
 	virtual void recieveCommand(InCommand& cmd) override {
@@ -46,7 +47,11 @@ public:
 		outCmd.setCommandType(OUT_COMMAND_TYPE::CREATE);
 		outCmd.setComponentId(id);
 		outCmd.setComponentTypeId(typeId);
-		outCmd.setCustomOutput("{\"caption\":\"" + caption.getValue() + "\"}");
+		for(const auto prop : properties){
+			outCmd.getSubCommands().push_back(prop->getCreateCommand());
+		}
+
+		// outCmd.setCustomOutput("{\"caption\":\"" + caption.getValue() + "\"}");
 
 		router->addCommand(outCmd);
 	}
@@ -61,7 +66,7 @@ public:
 
 protected:
 	virtual void setRouterInternal(Router* newRouter) override {
-		caption.setRouter(newRouter);
+		//caption.setRouter(newRouter);
 	}
 
 private:
@@ -69,10 +74,8 @@ private:
 		return str;
 	}
 
-	Property<std::string, &Button::toString> caption {"caption"};
+	Property<std::string, &Button::toString> caption {1};
 	std::vector<std::function<void(const ClickEvent&)>> clickListeners;
-
-
 };
 }
 

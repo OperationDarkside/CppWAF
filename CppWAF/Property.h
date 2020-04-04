@@ -10,48 +10,43 @@
 
 #include <string>
 
-#include "Router.h"
+#include "PropertyBase.h"
 
 namespace cwaf {
 template<typename Type, const std::string& Stringifier(const std::string& str)>
-class Property {
+class Property : public PropertyBase {
 public:
 
-	Property (std::string n) : name(std::move(n)) {
+	Property (std::uint16_t prop_id) : PropertyBase(prop_id) {
 
-	}
-
-	void setRouter(Router* newRouter){
-		router = newRouter;
-	}
-
-	void setComponentId(size_t id) {
-		comp_id = id;
 	}
 
 	const Type& getValue() {
 		return value;
 	}
 
-	void setValue(const Type& newValue){
+	void setValue(const Type& newValue, const bool isUserOriginated){
 		value = newValue;
 
-		if(router == nullptr){
+		if(router == nullptr || isUserOriginated){
 			return;
 		}
+
+		router->addCommand(getCreateCommand());
+	}
+
+	OutCommand getCreateCommand() override {
 		OutCommand outCmd;
 		outCmd.setCommandType(OUT_COMMAND_TYPE::UPDATE);
+		outCmd.setPropertyId(property_id);
 		outCmd.setComponentId(comp_id);
-		outCmd.setCustomOutput("{\"" + name + "\":\"" + Stringifier(value) + "\"}");
+		outCmd.setCustomOutput(Stringifier(value));
 
-		router->addCommand(outCmd);
+		return outCmd;
 	}
 
 private:
-	size_t comp_id = 0;
-	std::string name;
 	Type value;
-	Router* router = nullptr;
 };
 }
 
