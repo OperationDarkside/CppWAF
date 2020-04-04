@@ -42,26 +42,37 @@ function exeCmd(cmd) {
 	switch(cmd["cmdType"]){
 		case 0: // CREATE
 			if(cmd["type"] == 1) {
-				createButton(cmd["id"], cmd["custom"]);
+				createButton(cmd["id"], cmd["subCmds"], cmd["custom"]);
 			}
 		break;
 		case 1: // UPDATE
 			if(cmd["type"] == 1){
+				if(cmd.propId == 0){
+					updateButton(cmd["id"], cmd["subCmds"]);
+				} else {
+					var btn = components[cmd["id"]];
+					if(btn == undefined){
+						return;
+					}
+					updateButtonProperty(btn, cmd);
+				}
 				
 			}
+		break;
 		case 3: // RELATION
 			relateComponent(cmd["id"], cmd["custom"]);
 		break;
 	}
 }
 
-function createButton(id, custom){
-	console.log(custom);
-	var customValues = JSON.parse(custom);
-	console.log(customValues);
+function createButton(id, subCmds, custom){
+	//console.log(custom);
+	//var customValues = JSON.parse(custom);
+	//console.log(customValues);
+	
 	var btn = document.createElement("BUTTON");
 	btn["id"] = id;
-	btn.innerHTML = customValues["caption"];
+	// btn.innerHTML = customValues["caption"];
 	btn.onclick = function(){
 		var cmd = {};
 		cmd["type"] = 1;
@@ -71,8 +82,32 @@ function createButton(id, custom){
 		cmd["cmds"][0]["cmdType"] = 0;
 		sendCmd(cmd);
 	};
+	
+	updateButtonProperties(btn, subCmds);
 
 	components[id] = btn;
+}
+
+function updateButton(id, subCmds){
+	var btn = components[id];
+	if(btn == undefined){
+		return;
+	}
+	updateButtonProperties(btn, subCmds);
+}
+
+function updateButtonProperties(btn, subCmds){
+	for(var subCmd of subCmds) {
+		updateButtonProperty(btn, subCmd);
+	}
+}
+
+function updateButtonProperty(btn, cmd){
+	switch(cmd.propId){
+		case 1:
+			btn.innerHTML = cmd.custom;
+			break;
+	}
 }
 
 function relateComponent(id, custom){

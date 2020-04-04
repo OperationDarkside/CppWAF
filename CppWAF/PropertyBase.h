@@ -14,7 +14,7 @@ namespace cwaf {
 class PropertyBase {
 public:
 
-	PropertyBase (std::uint16_t prop_id) : property_id(prop_id) {
+	PropertyBase (std::uint16_t type_id, std::uint16_t prop_id) : typeId(type_id), property_id(prop_id) {
 
 	}
 
@@ -30,8 +30,9 @@ public:
 
 	virtual OutCommand getCreateCommand() = 0;
 
-private:
+protected:
 	std::uint16_t property_id;
+	std::uint16_t typeId = 0;
 	std::size_t comp_id = 0;
 	Router* router = nullptr;
 };

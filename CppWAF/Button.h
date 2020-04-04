@@ -23,7 +23,7 @@ public:
 
 	Button(){
 		setTypeId();
-		properties = {caption};
+		properties = {&caption};
 	}
 
 	void setCaption(const std::string capt){
@@ -74,7 +74,7 @@ private:
 		return str;
 	}
 
-	Property<std::string, &Button::toString> caption {1};
+	Property<std::string, &Button::toString> caption {1, 1};
 	std::vector<std::function<void(const ClickEvent&)>> clickListeners;
 };
 }

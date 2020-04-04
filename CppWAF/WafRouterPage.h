@@ -59,44 +59,9 @@ public:
 			int reqTypeId = reqType.GetInt();
 			if (reqTypeId == 0) {
 				std::vector<OutCommand> &outCmds = ui.getInitCommands();
-				rapidjson::Document outDoc;
-				outDoc.SetObject();
-				rapidjson::Document::AllocatorType& allocator = outDoc.GetAllocator();
 
-				rapidjson::Value outCmdArr(rapidjson::kArrayType);
-
-				for (OutCommand &outCmd : outCmds) {
-					rapidjson::Value outCmdVal;
-					outCmdVal.SetObject();
-					outCmdVal.AddMember("id", outCmd.getComponentId(), allocator);
-					outCmdVal.AddMember("propId", outCmd.getPropertyId(), allocator);
-					outCmdVal.AddMember("cmdType", outCmd.getCommandType(), allocator);
-					outCmdVal.AddMember("type", outCmd.getComponentTypeId(), allocator);
-					outCmdVal.AddMember("custom", rapidjson::Value(outCmd.getCustomOutput().c_str(), allocator), allocator);
-					if(!outCmd.getSubCommands().empty()){
-						rapidjson::Value outSubCmdArr(rapidjson::kArrayType);
-
-						for(OutCommand &subCommand : outCmd.getSubCommands()){
-							rapidjson::Value outSubCmdVal;
-							outSubCmdVal.SetObject();
-							outSubCmdVal.AddMember("id", subCommand.getComponentId(), allocator);
-							outSubCmdVal.AddMember("propId", subCommand.getPropertyId(), allocator);
-							outSubCmdVal.AddMember("cmdType", subCommand.getCommandType(), allocator);
-							outSubCmdVal.AddMember("type", subCommand.getComponentTypeId(), allocator);
-							outSubCmdVal.AddMember("custom", rapidjson::Value(subCommand.getCustomOutput().c_str(), allocator), allocator);
-							outSubCmdArr.PushBack(outSubCmdVal, allocator);
-						}
-						outCmdVal.AddMember("subCmds", outSubCmdArr, allocator);
-					}
-					outCmdArr.PushBack(outCmdVal, allocator);
-				}
-				outDoc.AddMember("cmds", outCmdArr, allocator);
-
-				rapidjson::StringBuffer buffer;
-				rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-				outDoc.Accept(writer);
-
-				resp.Body(buffer.GetString());
+				resp.Body(outCmdsToString(outCmds));
+				outCmds.clear();
 			} else {
 				rapidjson::Value &inCmds = inDoc["cmds"];
 				if (inCmds.IsArray()) {
@@ -114,12 +79,56 @@ public:
 					}
 
 					ui.distributeCommands(distrCmds);
+					std::vector<OutCommand> &outCmds = ui.getOutCommands();
+					resp.Body(outCmdsToString(outCmds));
+					outCmds.clear();
 				}
 			}
 
 		}
 
 		return resp;
+	}
+
+	std::string outCmdsToString(std::vector<OutCommand> &outCmds) {
+		rapidjson::Document outDoc;
+		outDoc.SetObject();
+		rapidjson::Document::AllocatorType& allocator = outDoc.GetAllocator();
+
+		rapidjson::Value outCmdArr(rapidjson::kArrayType);
+
+		for (OutCommand &outCmd : outCmds) {
+			rapidjson::Value outCmdVal;
+			outCmdVal.SetObject();
+			outCmdVal.AddMember("id", outCmd.getComponentId(), allocator);
+			outCmdVal.AddMember("propId", outCmd.getPropertyId(), allocator);
+			outCmdVal.AddMember("cmdType", outCmd.getCommandType(), allocator);
+			outCmdVal.AddMember("type", outCmd.getComponentTypeId(), allocator);
+			outCmdVal.AddMember("custom", rapidjson::Value(outCmd.getCustomOutput().c_str(), allocator), allocator);
+			if(!outCmd.getSubCommands().empty()){
+				rapidjson::Value outSubCmdArr(rapidjson::kArrayType);
+
+				for(OutCommand &subCommand : outCmd.getSubCommands()){
+					rapidjson::Value outSubCmdVal;
+					outSubCmdVal.SetObject();
+					outSubCmdVal.AddMember("id", subCommand.getComponentId(), allocator);
+					outSubCmdVal.AddMember("propId", subCommand.getPropertyId(), allocator);
+					outSubCmdVal.AddMember("cmdType", subCommand.getCommandType(), allocator);
+					outSubCmdVal.AddMember("type", subCommand.getComponentTypeId(), allocator);
+					outSubCmdVal.AddMember("custom", rapidjson::Value(subCommand.getCustomOutput().c_str(), allocator), allocator);
+					outSubCmdArr.PushBack(outSubCmdVal, allocator);
+				}
+				outCmdVal.AddMember("subCmds", outSubCmdArr, allocator);
+			}
+			outCmdArr.PushBack(outCmdVal, allocator);
+		}
+		outDoc.AddMember("cmds", outCmdArr, allocator);
+
+		rapidjson::StringBuffer buffer;
+		rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+		outDoc.Accept(writer);
+
+		return buffer.GetString();
 	}
 };
 }

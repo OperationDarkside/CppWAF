@@ -17,7 +17,7 @@ template<typename Type, const std::string& Stringifier(const std::string& str)>
 class Property : public PropertyBase {
 public:
 
-	Property (std::uint16_t prop_id) : PropertyBase(prop_id) {
+	Property (std::uint16_t type_id, std::uint16_t prop_id) : PropertyBase(type_id, prop_id) {
 
 	}
 
@@ -40,7 +40,8 @@ public:
 		outCmd.setCommandType(OUT_COMMAND_TYPE::UPDATE);
 		outCmd.setPropertyId(property_id);
 		outCmd.setComponentId(comp_id);
-		outCmd.setCustomOutput(Stringifier(value));
+		outCmd.setComponentTypeId(typeId);
+		outCmd.setCustomOutput("\"" + Stringifier(value) + "\"");
 
 		return outCmd;
 	}
